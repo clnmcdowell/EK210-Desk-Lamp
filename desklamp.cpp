@@ -6,8 +6,8 @@
 #define ledCount 16
 #define slide A0
 int on, count = 0;
-int morningLength = 10000; //in ms
-int nightLength = 5000;
+int morningLength = (10 / 0.01544); 
+int nightLength = (5 / 0.01544);
 double aread, brightness;
 double minBright = 50; //minimum brightness between 0 and 255
 double x = (((minBright / 255.0) * 1023) - 469) / (1 - (minBright / 255.0));
@@ -16,7 +16,6 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(ledCount, led, NEO_RGBW + NEO_KHZ80
 
 void setup() {
  pixels.begin();
- 
  pinMode(power, INPUT);
  pinMode(button, INPUT);
 }
@@ -42,7 +41,7 @@ void loop() {
     count++;
   }
 
-  while(on == HIGH && count > morningLength && count <= nightLength)
+  while(on == HIGH && count >= morningLength && count <= (morningLength + nightLength))
   { 
     for(int i = 0; i < ledCount; i++)
     {
@@ -52,8 +51,10 @@ void loop() {
     }
     aread = analogRead(slide);
     brightness = ((aread + x)/(1023 + x))* 255;
-    if(count == nightLength || button == HIGH)
+    if(count == (morningLength + nightLength) || button == HIGH)
       count = 0;
+
+
    
     count++;
     
